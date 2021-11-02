@@ -1,0 +1,122 @@
+<html lang="ko">
+<head>
+  <script src="/scripts/socket.io.min.js"></script>
+  <title>TEST</title>
+  <style>
+    #chat-container {
+      border: 1px solid black;
+      width: 700px;
+    }
+    #send-text {
+      width: 500px;
+    }
+    #chat-box {
+      margin: 32px;
+    }
+    #msg-box {
+      text-align: center;
+      margin-bottom: 8px;
+      padding: 4px;
+    }
+    .myMsg {
+      text-align: right;
+      background: yellow;
+      margin-top: 10px;
+    }
+    .yourMsg {
+      background: aqua;
+      margin-top: 10px;
+    }
+    #google-focus-btn {display: none}
+    #google-pressed-btn{display: none}
+    #google-login-btn:hover #google-normal-btn{display: none}
+    #google-login-btn:hover #google-focus-btn{display: inline}
+    #google-login-btn:hover #google-pressed-btn{display: none}
+    #google-login-btn:active #google-normal-btn{display: none}
+    #google-login-btn:active #google-focus-btn{display: none}
+    #google-login-btn:active #google-pressed-btn{display: inline}
+    .login-btn {
+      width: 256px;
+    }
+  </style>
+</head>
+<body>
+<h1>기능테스트</h1>
+<hr>
+<ul>
+  <li>
+    <button onclick="sendText()">send testchatroom</button>
+  </li>
+  <li>
+    <button onclick="whisper()">only to server</button>
+  </li>
+</ul>
+<hr>
+<div id="chat-container">
+  <div id="chat-box"></div>
+  <hr>
+  <div id="msg-box">
+    <label>MESSAGE
+      <input type="text" id="send-text">
+      <button onclick="sendMessage()">SEND</button>
+    </label>
+  </div>
+</div>
+<hr>
+<div id="google-login-btn">
+  <a href="/v1/auth/google">
+    <img class="login-btn" id="google-normal-btn" src="/images/btn_google_signin_light_normal_web@2x.png" alt="google-oauth-login">
+    <img class="login-btn" id="google-focus-btn" src="/images/btn_google_signin_light_focus_web@2x.png" alt="google-oauth-login">
+    <img class="login-btn" id="google-pressed-btn" src="/images/btn_google_signin_light_pressed_web@2x.png" alt="google-oauth-login">
+  </a>
+</div>
+<div id="account-info-container">
+  <span id="account-info-raw"></span>
+  <hr>
+  <div>
+    <img src="." alt="profile-img" id="photo">
+    <div id="account-info-box"></div>
+  </div>
+  <button onclick="logout()">logout</button>
+</div>
+<script>
+  const socket = io();
+  const sendText = () => socket.emit("chat", "clicked");
+  const whisper = () => socket.emit("whisper", "whispering");
+  const sendMessage = () => {
+    const value = document.querySelector("#send-text").value;
+    socket.emit("chat", value);
+    const child = document.createElement("div");
+    child.className = "myMsg";
+    child.textContent = `ME: ${value}`;
+    document.querySelector("#chat-box").appendChild(child);
+  };
+  socket.on("connect", () => {
+    console.log(`connected ${socket.id}`);
+  });
+  socket.on("chat", (data) => {
+    const child = document.createElement("div");
+    child.className = "yourMsg";
+    child.textContent = typeof data === "string" ? data : `${data.client}: ${data.data}`;
+    document.querySelector("#chat-box").appendChild(child);
+  });
+  fetch('/v1/users').then(res => res.text().then(raw => {
+    const body = JSON.parse(raw)
+    document.querySelector("#account-info-raw").innerHTML = raw;
+    document.querySelector('#photo').setAttribute('src', body['photo'])
+    const displayName = document.createElement('span')
+    displayName.innerHTML = body['displayName']
+    const email = document.createElement('span')
+    email.innerHTML = body['email']
+    const openid = document.createElement('span')
+    openid.innerHTML = body['googleId']
+    document.querySelector('#account-info-box').appendChild(displayName)
+    document.querySelector('#account-info-box').appendChild(document.createElement('br'))
+    document.querySelector('#account-info-box').appendChild(email)
+    document.querySelector('#account-info-box').appendChild(document.createElement('br'))
+    document.querySelector('#account-info-box').appendChild(openid)
+  }))
+  const logout = () => fetch('/v1/auth/logout').then(r => window.location.reload())
+</script>
+</body>
+</html>
