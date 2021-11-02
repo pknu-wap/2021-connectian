@@ -35,7 +35,7 @@ async function bootstrap() {
   app.useWebSocketAdapter(new IoAdapter(app));
   app.use(
     session({
-      secret: '839weuhfjkds#$%',
+      secret: process.env['SESSION_SECRET'],
       resave: false,
       saveUninitialized: false,
     }),
