@@ -1,44 +1,8 @@
 <html lang="ko">
 <head>
-  <script src="/scripts/socket.io.min.js"></script>
   <title>TEST</title>
-  <style>
-    #chat-container {
-      border: 1px solid black;
-      width: 700px;
-    }
-    #send-text {
-      width: 500px;
-    }
-    #chat-box {
-      margin: 32px;
-    }
-    #msg-box {
-      text-align: center;
-      margin-bottom: 8px;
-      padding: 4px;
-    }
-    .myMsg {
-      text-align: right;
-      background: yellow;
-      margin-top: 10px;
-    }
-    .yourMsg {
-      background: aqua;
-      margin-top: 10px;
-    }
-    #google-focus-btn {display: none}
-    #google-pressed-btn{display: none}
-    #google-login-btn:hover #google-normal-btn{display: none}
-    #google-login-btn:hover #google-focus-btn{display: inline}
-    #google-login-btn:hover #google-pressed-btn{display: none}
-    #google-login-btn:active #google-normal-btn{display: none}
-    #google-login-btn:active #google-focus-btn{display: none}
-    #google-login-btn:active #google-pressed-btn{display: inline}
-    .login-btn {
-      width: 256px;
-    }
-  </style>
+  <link rel="stylesheet" href="/styles/app.css">
+  <script src="/scripts/socket.io.min.js"></script>
 </head>
 <body>
 <h1>기능테스트</h1>
@@ -52,22 +16,29 @@
   </li>
 </ul>
 <hr>
+
 <div id="chat-container">
-  <div id="chat-box"></div>
-  <hr>
-  <div id="msg-box">
-    <label>MESSAGE
-      <input type="text" id="send-text">
-      <button onclick="sendMessage()">SEND</button>
-    </label>
+  <div id="room-box"></div>
+  <div id="chat-box">
+    <div id="chat-list"></div>
+    <hr>
+    <div id="msg-box">
+      <label>MESSAGE
+        <input type="text" id="send-text">
+        <button onclick="sendMessage()">SEND</button>
+      </label>
+    </div>
   </div>
 </div>
 <hr>
 <div id="google-login-btn">
   <a href="/v1/auth/google">
-    <img class="login-btn" id="google-normal-btn" src="/images/btn_google_signin_light_normal_web@2x.png" alt="google-oauth-login">
-    <img class="login-btn" id="google-focus-btn" src="/images/btn_google_signin_light_focus_web@2x.png" alt="google-oauth-login">
-    <img class="login-btn" id="google-pressed-btn" src="/images/btn_google_signin_light_pressed_web@2x.png" alt="google-oauth-login">
+    <img class="login-btn" id="google-normal-btn" src="/images/btn_google_signin_light_normal_web@2x.png"
+         alt="google-oauth-login">
+    <img class="login-btn" id="google-focus-btn" src="/images/btn_google_signin_light_focus_web@2x.png"
+         alt="google-oauth-login">
+    <img class="login-btn" id="google-pressed-btn" src="/images/btn_google_signin_light_pressed_web@2x.png"
+         alt="google-oauth-login">
   </a>
 </div>
 <div id="account-info-container">
@@ -80,43 +51,90 @@
   <button onclick="logout()">logout</button>
 </div>
 <script>
-  const socket = io();
-  const sendText = () => socket.emit("chat", "clicked");
-  const whisper = () => socket.emit("whisper", "whispering");
+  const accessToken = fetch("/v1/events/token").then(r => r.text().then(access_token => io({
+    auth: { access_token }
+  })).then(socket => {
+    socket.on("connect", () => {
+      console.log(`connected ${socket.id}`);
+    });
+    socket.on("pushChat", (data) => {
+      const child = document.createElement("div");
+      child.className = "yourMsg";
+      child.textContent = `${document.members[document.roomId][data.userId].nickname}: ${data.message}`;
+      document.querySelector("#chat-list").appendChild(child);
+    });
+    document.socket = socket;
+  }));
+  const sendText = () => document.socket.emit("chat", "clicked");
+  const whisper = () => document.socket.emit("whisper", "whispering");
   const sendMessage = () => {
     const value = document.querySelector("#send-text").value;
-    socket.emit("chat", value);
+    document.socket.emit("pushChat", {
+      roomId: document.roomId,
+      message: value
+    });
     const child = document.createElement("div");
     child.className = "myMsg";
     child.textContent = `ME: ${value}`;
-    document.querySelector("#chat-box").appendChild(child);
+    document.querySelector("#chat-list").appendChild(child);
   };
-  socket.on("connect", () => {
-    console.log(`connected ${socket.id}`);
-  });
-  socket.on("chat", (data) => {
-    const child = document.createElement("div");
-    child.className = "yourMsg";
-    child.textContent = typeof data === "string" ? data : `${data.client}: ${data.data}`;
-    document.querySelector("#chat-box").appendChild(child);
-  });
-  fetch('/v1/users').then(res => res.text().then(raw => {
-    const body = JSON.parse(raw)
+  fetch("/v1/users").then(res => res.text().then(raw => {
+    const body = JSON.parse(raw);
     document.querySelector("#account-info-raw").innerHTML = raw;
-    document.querySelector('#photo').setAttribute('src', body['photo'])
-    const displayName = document.createElement('span')
-    displayName.innerHTML = body['displayName']
-    const email = document.createElement('span')
-    email.innerHTML = body['email']
-    const openid = document.createElement('span')
-    openid.innerHTML = body['googleId']
-    document.querySelector('#account-info-box').appendChild(displayName)
-    document.querySelector('#account-info-box').appendChild(document.createElement('br'))
-    document.querySelector('#account-info-box').appendChild(email)
-    document.querySelector('#account-info-box').appendChild(document.createElement('br'))
-    document.querySelector('#account-info-box').appendChild(openid)
-  }))
-  const logout = () => fetch('/v1/auth/logout').then(r => window.location.reload())
+    document.querySelector("#photo").setAttribute("src", body["photo"]);
+    const displayName = document.createElement("span");
+    displayName.innerHTML = body["displayName"];
+    const email = document.createElement("span");
+    email.innerHTML = body["email"];
+    const openid = document.createElement("span");
+    openid.innerHTML = body["googleId"];
+    document.querySelector("#account-info-box").appendChild(displayName);
+    document.querySelector("#account-info-box").appendChild(document.createElement("br"));
+    document.querySelector("#account-info-box").appendChild(email);
+    document.querySelector("#account-info-box").appendChild(document.createElement("br"));
+    document.querySelector("#account-info-box").appendChild(openid);
+    document.myInfo = body;
+  }));
+  fetch("/v1/chats/rooms").then(res => res.text().then(raw => {
+    const body = JSON.parse(raw);
+    body.forEach(room => {
+      const roomElement = document.createElement("div");
+      roomElement.id = room.roomId;
+      const roomTitle = document.createElement("span");
+      roomTitle.className = "room-title";
+      roomTitle.innerHTML = room.title;
+      roomElement.appendChild(roomTitle);
+      roomElement.appendChild(document.createElement("br"));
+      const lastMessage = document.createElement("small");
+      lastMessage.innerHTML = room.lastMessage;
+      roomElement.appendChild(lastMessage);
+      roomElement.appendChild(document.createElement("br"));
+      const modifiedAt = document.createElement("small");
+      modifiedAt.className = "room-modified-at";
+      modifiedAt.innerHTML = new Date(room.modifiedAt).toLocaleString();
+      roomElement.appendChild(modifiedAt);
+      roomElement.addEventListener("click", () => {
+        document.socket.emit("joinRoom", room.roomId);
+        document.roomId = room.roomId;
+        fetch(`/v1/chats?roomId=${room.roomId}`).then(res => res.text().then(raw => {
+          const body = JSON.parse(raw);
+          const chats = Object.values(body);
+          document.querySelector("#chat-list").innerHTML = ''
+          chats.forEach(chat => {
+            const child = document.createElement("div");
+            child.className = document.myInfo.userId === chat.userId ? "myMsg" : "yourMsg";
+            child.textContent = `${document.members[document.roomId][chat.userId].nickname}: ${chat.message}`;
+            document.querySelector("#chat-list").appendChild(child);
+          });
+        }));
+      });
+      const members = {};
+      members[room.roomId] = room.members;
+      document.members = { ...document.members, ...members };
+      document.querySelector("#room-box").appendChild(roomElement);
+    });
+  }));
+  const logout = () => fetch("/v1/auth/logout").then(r => window.location.reload());
 </script>
 </body>
 </html>
