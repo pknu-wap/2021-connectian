@@ -7,11 +7,13 @@ import { IndexModule } from './index/index.module';
 import { RolesModule } from './roles/roles.module';
 import { ChatsModule } from './chats/chats.module';
 import { ConfigModule } from '@nestjs/config';
+import { validate } from './config/config.validation';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
+      validate: validate,
     }),
     UsersModule,
     EventsModule,
