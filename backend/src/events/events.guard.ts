@@ -9,6 +9,7 @@ export class EventsGuard implements CanActivate {
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const client: Socket = context.switchToWs().getClient();
     const token = client.handshake.auth.access_token;
-    return await this.eventsService.verify(token);
+    const result = await this.eventsService.verify(token);
+    return !!result;
   }
 }

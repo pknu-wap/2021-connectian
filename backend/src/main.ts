@@ -2,7 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import * as admin from 'firebase-admin';
 import { join } from 'path';
-import { VersioningType } from '@nestjs/common';
+import { ValidationPipe, VersioningType } from '@nestjs/common';
 import { IoAdapter } from '@nestjs/platform-socket.io';
 import {
   ExpressAdapter,
@@ -60,6 +60,11 @@ async function bootstrap() {
         kind: 'express-session',
         dataset: firebase.firestore(),
       }),
+    }),
+  );
+  app.useGlobalPipes(
+    new ValidationPipe({
+      transform: true,
     }),
   );
   await app.listen(configService.get<number>('PORT') || 3000, '0.0.0.0');

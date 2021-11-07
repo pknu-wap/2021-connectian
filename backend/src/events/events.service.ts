@@ -19,7 +19,7 @@ export class EventsService {
   }
 
   public async verify(token: string) {
-    return this.jwtService.verify(token);
+    return !token ? null : this.jwtService.verify(token);
   }
 
   public async getUserId(token: string) {

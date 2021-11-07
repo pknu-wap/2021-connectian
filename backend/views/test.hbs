@@ -51,7 +51,7 @@
   <button onclick="logout()">logout</button>
 </div>
 <script>
-  const accessToken = fetch("/v1/events/token").then(r => r.text().then(access_token => io({
+  fetch("/v1/events/token").then(r => r.text().then(access_token => io({
     auth: { access_token }
   })).then(socket => {
     socket.on("connect", () => {
@@ -61,7 +61,13 @@
       const child = document.createElement("div");
       child.className = "yourMsg";
       child.textContent = `${document.members[document.roomId][data.userId].nickname}: ${data.message}`;
+      const brElement = document.createElement('br')
+      const createdAt = document.createElement('small')
+      createdAt.innerHTML = new Date(data.createdAt).toLocaleString()
+      child.appendChild(brElement)
+      child.appendChild(createdAt)
       document.querySelector("#chat-list").appendChild(child);
+      document.querySelector(`div#${document.roomId} > small.last-message`).innerHTML = data.message;
     });
     document.socket = socket;
   }));
@@ -76,7 +82,13 @@
     const child = document.createElement("div");
     child.className = "myMsg";
     child.textContent = `ME: ${value}`;
+    const brElement = document.createElement('br')
+    const createdAt = document.createElement('small')
+    createdAt.innerHTML = new Date().toLocaleString()
+    child.appendChild(brElement)
+    child.appendChild(createdAt)
     document.querySelector("#chat-list").appendChild(child);
+    document.querySelector(`div#${document.roomId} > small.last-message`).innerHTML = value;
   };
   fetch("/v1/users/getUser").then(res => res.text().then(raw => {
     const body = JSON.parse(raw);
@@ -106,6 +118,7 @@
       roomElement.appendChild(roomTitle);
       roomElement.appendChild(document.createElement("br"));
       const lastMessage = document.createElement("small");
+      lastMessage.className = 'last-message';
       lastMessage.innerHTML = room.lastMessage;
       roomElement.appendChild(lastMessage);
       roomElement.appendChild(document.createElement("br"));
@@ -119,11 +132,16 @@
         fetch(`/v1/chats?roomId=${room.roomId}`).then(res => res.text().then(raw => {
           const body = JSON.parse(raw);
           const chats = Object.values(body);
-          document.querySelector("#chat-list").innerHTML = ''
+          document.querySelector("#chat-list").innerHTML = "";
           chats.forEach(chat => {
             const child = document.createElement("div");
             child.className = document.myInfo.userId === chat.userId ? "myMsg" : "yourMsg";
             child.textContent = `${document.members[document.roomId][chat.userId].nickname}: ${chat.message}`;
+            const brElement = document.createElement('br')
+            const createdAt = document.createElement('small')
+            createdAt.innerHTML = new Date(chat.createdAt).toLocaleString()
+            child.appendChild(brElement)
+            child.appendChild(createdAt)
             document.querySelector("#chat-list").appendChild(child);
           });
         }));

@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { database } from 'firebase-admin';
 import { Profile } from 'passport-google-oauth20';
-import { User } from './user';
+import { User, UserDetail } from './user';
 import { RoleEnum } from '../roles/role.enum';
 
 @Injectable()
@@ -50,5 +50,12 @@ export class UsersService {
       const child = ref.val();
       return !child ? null : { ...child, userId };
     }
+  }
+
+  public async setUserDetail(userId: string, userDetail: UserDetail) {
+    const ref = await this.db.ref(`/users/${userId}/detail`);
+    const response = await ref.get();
+    const value = { ...response.val(), ...userDetail };
+    return ref.set(value);
   }
 }

@@ -1,11 +1,15 @@
 import { Injectable } from '@nestjs/common';
 import { database } from 'firebase-admin';
 import { Member, Message, Room } from './chats';
-import { CreatedPurposeEnum } from './chat.enum';
 
 @Injectable()
 export class ChatsService {
   private db = database();
+
+  public async getPurposes() {
+    const ref = await this.db.ref('/enums/purposes').get();
+    return ref.val();
+  }
 
   public async chatsByRoomId(roomId: string) {
     const rootRef = this.db.ref(`/chats/messages/${roomId}`);
@@ -13,18 +17,25 @@ export class ChatsService {
     return response.val();
   }
 
-  public async createRoom(title: string, createdPurpose: CreatedPurposeEnum) {
-    const rootRef = this.db.ref('/chats/rooms');
+  public async createRoom(title: string, purpose: string) {
+    const rootRef = this.db.ref();
+    const purposeValue = await rootRef.child(`/enums/purpose/${purpose}`).get();
     const date = new Date();
-    const room = new Room(title, createdPurpose, '', date, date).toPrimitive();
-    return rootRef.push(room).key;
+    const room = new Room(
+      title,
+      purposeValue.val(),
+      '',
+      date,
+      date,
+    ).toPrimitive();
+    return rootRef.child('/chats/rooms').push(room).key;
   }
 
-  public async addUserToRoom(userId: string, roomId: string) {
+  public async addUserToRoom(userId: string, roomId: string, nickname: string) {
     const rootRef = this.db.ref();
     await rootRef.child(`/users/${userId}/chats/rooms/${roomId}`).set(true);
     const member = new Member(
-      '춤추는 라이언',
+      nickname,
       '#' + Math.round(Math.random() * 0xffffff).toString(16),
     );
     await rootRef.child(`/chats/members/${roomId}/${userId}`).set(member);
@@ -56,5 +67,17 @@ export class ChatsService {
     const messageObj = new Message(userId, message, new Date()).toPrimitive();
     rootRef.child(`/chats/messages/${roomId}`).push(messageObj);
     return messageObj;
+  }
+
+  public async setUserInfoByRoomId(
+    userId: string,
+    roomId: string,
+    member: Member,
+  ) {
+    const ref = this.db.ref(`/chats/members/${roomId}/${userId}`);
+    const response = await ref.get();
+    if (!response.exists()) return;
+    if (!!member.color) await ref.child('/color').set(member.color);
+    if (!!member.nickname) await ref.child('/nickname').set(member.nickname);
   }
 }

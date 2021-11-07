@@ -13,16 +13,27 @@ export class Chats {
   rooms: any;
 }
 
-export class RoomExample {
-  $roomId: boolean;
-}
+export class UserDetail {
+  @ApiProperty()
+  age: number;
 
-export class ChatsExample extends Chats {
-  @ApiProperty({
-    description:
-      '사용자의 웹소켓 room 목록입니다. key가 room 이름이고 value는 아무 의미 없습니다.',
-  })
-  rooms: RoomExample;
+  @ApiProperty()
+  purpose: string;
+
+  @ApiProperty()
+  mbti: string;
+
+  @ApiProperty()
+  major: string;
+
+  @ApiProperty()
+  canAlcohol: boolean;
+
+  @ApiProperty()
+  isSmoke: boolean;
+
+  @ApiProperty()
+  height: number;
 }
 
 export class User {
@@ -57,9 +68,6 @@ export class User {
 
   @ApiProperty()
   chats: Chats;
-}
 
-export class UserExample extends User {
-  @ApiProperty()
-  chats: ChatsExample;
+  detail: UserDetail;
 }

@@ -1,16 +1,15 @@
-import { CreatedPurposeEnum } from './chat.enum';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class Room {
   constructor(
     title: string,
-    createdPurpose: CreatedPurposeEnum,
+    purpose: string,
     lastMessage: string,
     createdAt: Date | number,
     modifiedAt: Date | number,
   ) {
     this.title = title;
-    this.createdPurpose = createdPurpose;
+    this.createdPurpose = purpose;
     this.lastMessage = lastMessage;
     this.modifiedAt =
       typeof modifiedAt !== 'number' ? modifiedAt : new Date(modifiedAt);
@@ -30,7 +29,7 @@ export class Room {
   title: string;
 
   @ApiProperty()
-  createdPurpose: CreatedPurposeEnum;
+  createdPurpose: string;
 
   @ApiProperty()
   lastMessage: string;
@@ -80,7 +79,10 @@ export class Message {
   createdAt: Date;
 }
 
-export class ChatsByRoomIdResponseExample {
+export class SetUserInfoByRoomIdResponseDto {
   @ApiProperty()
-  $roomId: Message;
+  roomId: string;
+
+  @ApiProperty()
+  member: Member;
 }
