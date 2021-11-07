@@ -1,6 +1,7 @@
 #Custom
 serviceAccountKey.json
 ecosystem.config.js
+.env
 
 # compiled output
 /dist

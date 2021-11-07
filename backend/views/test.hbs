@@ -78,7 +78,7 @@
     child.textContent = `ME: ${value}`;
     document.querySelector("#chat-list").appendChild(child);
   };
-  fetch("/v1/users").then(res => res.text().then(raw => {
+  fetch("/v1/users/getUser").then(res => res.text().then(raw => {
     const body = JSON.parse(raw);
     document.querySelector("#account-info-raw").innerHTML = raw;
     document.querySelector("#photo").setAttribute("src", body["photo"]);
