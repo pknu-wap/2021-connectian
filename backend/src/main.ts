@@ -9,19 +9,21 @@ import {
   NestExpressApplication,
 } from '@nestjs/platform-express';
 import * as session from 'express-session';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { FirestoreStore } from '@google-cloud/connect-firestore';
 
 const port = parseInt(process.env['PORT']) | 3000;
 
 async function bootstrap() {
   console.time(`NEST_LOAD_IN_PORT_${port}`);
-  const firebaseName = admin.initializeApp({
+  const firebase = admin.initializeApp({
     credential: admin.credential.cert(
       join(__dirname, '..', 'serviceAccountKey.json'),
     ),
     databaseURL:
       'https://wap-connectian-default-rtdb.asia-southeast1.firebasedatabase.app',
-  }).name;
-  console.log(`firebase sdk: ${firebaseName}`);
+  });
+  console.log(`firebase sdk: ${firebase.name}`);
   const app = await NestFactory.create<NestExpressApplication>(
     AppModule,
     new ExpressAdapter(),
@@ -33,11 +35,31 @@ async function bootstrap() {
   app.setViewEngine('hbs');
   app.setBaseViewsDir(join(__dirname, '..', 'views'));
   app.useWebSocketAdapter(new IoAdapter(app));
+  SwaggerModule.setup(
+    'api',
+    app,
+    SwaggerModule.createDocument(
+      app,
+      new DocumentBuilder()
+        .setTitle('CONNECTIAN')
+        .setDescription('CONNECTIAN 2021')
+        .setVersion('1.0')
+        .build(),
+    ),
+  );
   app.use(
     session({
       secret: process.env['SESSION_SECRET'],
+      cookie: {
+        httpOnly: true,
+        maxAge: 1000 * 60 * 60 * 6,
+      },
       resave: false,
       saveUninitialized: false,
+      store: new FirestoreStore({
+        kind: 'express-session',
+        dataset: firebase.firestore(),
+      }),
     }),
   );
   await app.listen(port, '0.0.0.0');

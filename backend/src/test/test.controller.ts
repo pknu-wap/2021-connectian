@@ -1,19 +1,27 @@
-import { Controller, Get, Render, Request, UseGuards } from '@nestjs/common';
+import { Controller, Get, Render, Session, UseGuards } from '@nestjs/common';
 import { UsersService } from '../users/users.service';
 import { Roles } from '../roles/roles.decorator';
 import { RoleEnum } from '../roles/role.enum';
 import { RolesGuard } from '../roles/roles.guard';
+import { NodeEnvs } from 'src/envs/envs.decorator';
+import { NodeEnvEnum } from '../envs/env.enum';
+import { NodeEnvsGuard } from '../envs/envs.guard';
+import { SessionRecord } from '../session/session';
+import { ApiTags } from '@nestjs/swagger';
 
 @Controller({
   path: '/testing',
 })
+@ApiTags('testing')
 export class TestController {
   constructor(private readonly usersService: UsersService) {}
 
   @Get('/')
   @Render('test')
   @Roles(RoleEnum.Admin)
+  @NodeEnvs(NodeEnvEnum.DEVELOPMENT)
   @UseGuards(RolesGuard)
+  @UseGuards(NodeEnvsGuard)
   public index() {
     return;
   }
@@ -21,9 +29,10 @@ export class TestController {
   @Get('/profile')
   @Roles(RoleEnum.Admin)
   @UseGuards(RolesGuard)
-  public async getProfile(@Request() req) {
+  public async getProfile(@Session() session: SessionRecord) {
     return {
-      user: await this.usersService.findById(req.session.user),
+      session,
+      user: await this.usersService.findById(session.user),
     };
   }
 }

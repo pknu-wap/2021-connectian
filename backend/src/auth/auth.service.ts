@@ -6,7 +6,7 @@ import { Profile } from 'passport-google-oauth20';
 export class AuthService {
   constructor(private usersService: UsersService) {}
 
-  async validateUserByGoogleId(profile: Profile) {
+  public async validateUserByGoogleId(profile: Profile) {
     return await this.usersService.findOrCreateByGoogleId(profile);
   }
 }

@@ -1,22 +1,33 @@
-import { SubscribeMessage, WebSocketGateway } from '@nestjs/websockets';
+import {
+  ConnectedSocket,
+  MessageBody,
+  SubscribeMessage,
+  WebSocketGateway,
+} from '@nestjs/websockets';
 import { Socket } from 'socket.io';
+import { UseGuards } from '@nestjs/common';
+import { EventsGuard } from './events.guard';
+import { EventsService } from './events.service';
 
 @WebSocketGateway()
 export class EventsGateway {
-  @SubscribeMessage('chat')
-  public pushChat(client: Socket, data) {
-    client.to('testchatroom').emit('chat', {
-      client: client.id,
-      data,
-    });
+  constructor(private eventsService: EventsService) {}
+
+  @SubscribeMessage('pushChat')
+  public async pushChat(
+    @ConnectedSocket() client: Socket,
+    @MessageBody() data,
+  ) {
+    await this.eventsService.pushChat(client, data);
   }
 
-  @SubscribeMessage('whisper')
-  public pushWhisper(client: Socket, data) {
-    console.log({
-      client: client.id,
-      data,
-    });
+  @SubscribeMessage('joinRoom')
+  @UseGuards(EventsGuard)
+  public async joinRoom(
+    @ConnectedSocket() client: Socket,
+    @MessageBody() data,
+  ) {
+    await this.eventsService.joinRoom(client, data);
   }
 
   // handleConnection, handleDisconnection

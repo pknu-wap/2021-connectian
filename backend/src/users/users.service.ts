@@ -9,9 +9,9 @@ export class UsersService {
   private db = database();
 
   public async findOrCreateByGoogleId(profile: Profile): Promise<string> {
-    const rootRef = this.db.ref().child('/users');
+    const rootRef = this.db.ref('/users');
     const ref = await rootRef
-      .orderByChild('googleId')
+      .orderByChild('/googleId')
       .equalTo(profile.id)
       .get();
     const child = ref.val();
@@ -34,14 +34,21 @@ export class UsersService {
     }
   }
 
-  public async findById(id: string): Promise<User | null> {
-    if (!id) {
+  public async isUserInRoomByUserId(userId: string, roomId) {
+    const response = await this.db
+      .ref(`/users/${userId}/chats/rooms/${roomId}`)
+      .get();
+    return response.exists();
+  }
+
+  public async findById(userId: string): Promise<User | null> {
+    if (!userId) {
       return null;
     } else {
-      const rootRef = this.db.ref().child('/users');
-      const ref = await rootRef.child(id).get();
+      const rootRef = this.db.ref('/users');
+      const ref = await rootRef.child(userId).get();
       const child = ref.val();
-      return !child ? null : child;
+      return !child ? null : { ...child, userId };
     }
   }
 }
