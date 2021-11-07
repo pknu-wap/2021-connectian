@@ -11,12 +11,10 @@ import {
 import * as session from 'express-session';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { FirestoreStore } from '@google-cloud/connect-firestore';
-import { PORT, SESSION_SECRET } from './envs/envs';
-
-const port = PORT | 3000;
+import { ConfigService } from '@nestjs/config';
 
 async function bootstrap() {
-  console.time(`NEST_LOAD_IN_PORT_${port}`);
+  console.time(`NEST_LOAD_IN`);
   const firebase = admin.initializeApp({
     credential: admin.credential.cert(
       join(__dirname, '..', 'serviceAccountKey.json'),
@@ -36,6 +34,7 @@ async function bootstrap() {
   app.setViewEngine('hbs');
   app.setBaseViewsDir(join(__dirname, '..', 'views'));
   app.useWebSocketAdapter(new IoAdapter(app));
+  const configService = app.get(ConfigService);
   SwaggerModule.setup(
     'api',
     app,
@@ -50,7 +49,7 @@ async function bootstrap() {
   );
   app.use(
     session({
-      secret: SESSION_SECRET,
+      secret: configService.get<string>('SESSION_SECRET'),
       cookie: {
         httpOnly: true,
         maxAge: 1000 * 60 * 60 * 6,
@@ -63,7 +62,7 @@ async function bootstrap() {
       }),
     }),
   );
-  await app.listen(port, '0.0.0.0');
+  await app.listen(configService.get<number>('PORT') || 3000, '0.0.0.0');
 }
 
-bootstrap().then(() => console.timeEnd(`NEST_LOAD_IN_PORT_${port}`));
+bootstrap().then(() => console.timeEnd(`NEST_LOAD_IN`));

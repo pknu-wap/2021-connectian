@@ -7,21 +7,22 @@ import { EventsService } from './events.service';
 import { EventsController } from './events.controller';
 import { ChatsModule } from '../chats/chats.module';
 import { ChatsService } from '../chats/chats.service';
-import { jwtConstants } from '../envs/envs';
+import { ConfigService } from '@nestjs/config';
 
-@Module({
+Module({
   providers: [EventsGateway, EventsService, ChatsService],
   imports: [
     UsersModule,
     AuthModule,
     JwtModule.registerAsync({
-      useFactory: async () => ({
-        secret: jwtConstants.secret,
+      useFactory: async (config: ConfigService) => ({
+        secret: config.get<string>('SESSION_SECRET'),
         signOptions: { expiresIn: '1d' },
       }),
     }),
     ChatsModule,
   ],
   controllers: [EventsController],
-})
+});
+
 export class EventsModule {}

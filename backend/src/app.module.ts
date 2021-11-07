@@ -6,10 +6,13 @@ import { AuthModule } from './auth/auth.module';
 import { IndexModule } from './index/index.module';
 import { RolesModule } from './roles/roles.module';
 import { ChatsModule } from './chats/chats.module';
-import { EnvsModule } from './envs/envs.module';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [
+    ConfigModule.forRoot({
+      isGlobal: true,
+    }),
     UsersModule,
     EventsModule,
     TestModule,
@@ -17,7 +20,7 @@ import { EnvsModule } from './envs/envs.module';
     IndexModule,
     RolesModule,
     ChatsModule,
-    EnvsModule,
+    ConfigModule,
   ],
 })
 export class AppModule {}

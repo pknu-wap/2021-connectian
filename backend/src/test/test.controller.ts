@@ -3,9 +3,9 @@ import { UsersService } from '../users/users.service';
 import { Roles } from '../roles/roles.decorator';
 import { RoleEnum } from '../roles/role.enum';
 import { RolesGuard } from '../roles/roles.guard';
-import { NodeEnvs } from 'src/envs/envs.decorator';
-import { NodeEnvEnum } from '../envs/env.enum';
-import { NodeEnvsGuard } from '../envs/envs.guard';
+import { NodeEnvs } from 'src/config/config.decorator';
+import { NodeEnvEnum } from '../config/config.enum';
+import { NodeEnvsGuard } from '../config/config.guard';
 import { SessionRecord } from '../session/session';
 import { ApiTags } from '@nestjs/swagger';
 

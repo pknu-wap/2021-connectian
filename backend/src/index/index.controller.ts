@@ -6,6 +6,6 @@ import { Controller, Get } from '@nestjs/common';
 export class IndexController {
   @Get('/')
   public index() {
-    return;
+    return {};
   }
 }
