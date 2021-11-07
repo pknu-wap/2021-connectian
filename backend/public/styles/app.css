@@ -1,0 +1,87 @@
+#chat-container {
+    border: 1px solid black;
+    width: 900px;
+    display: flex;
+}
+
+#send-text {
+    width: 500px;
+}
+
+#room-box {
+    border-right: 1px solid black;
+    float: left;
+    width: 200px;
+    padding: 10px;
+}
+
+#chat-box {
+    float: left;
+    width: 100%;
+}
+
+.room-title {
+    font-weight: bold;
+}
+
+.room-modified-at {
+    color: gray;
+}
+
+#chat-list {
+    margin: 32px;
+    min-height: 200px;
+}
+
+#msg-box {
+    text-align: center;
+    margin-bottom: 8px;
+    padding: 4px;
+}
+
+.myMsg {
+    text-align: right;
+    background: yellow;
+    margin-top: 10px;
+}
+
+.yourMsg {
+    background: aqua;
+    margin-top: 10px;
+}
+
+#google-focus-btn {
+    display: none
+}
+
+#google-pressed-btn {
+    display: none
+}
+
+#google-login-btn:hover #google-normal-btn {
+    display: none
+}
+
+#google-login-btn:hover #google-focus-btn {
+    display: inline
+}
+
+#google-login-btn:hover #google-pressed-btn {
+    display: none
+}
+
+#google-login-btn:active #google-normal-btn {
+    display: none
+}
+
+#google-login-btn:active #google-focus-btn {
+    display: none
+}
+
+#google-login-btn:active #google-pressed-btn {
+    display: inline
+}
+
+.login-btn {
+    width: 256px;
+}
