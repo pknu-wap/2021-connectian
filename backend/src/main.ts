@@ -11,8 +11,9 @@ import {
 import * as session from 'express-session';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { FirestoreStore } from '@google-cloud/connect-firestore';
+import { PORT, SESSION_SECRET } from './envs/envs';
 
-const port = parseInt(process.env['PORT']) | 3000;
+const port = PORT | 3000;
 
 async function bootstrap() {
   console.time(`NEST_LOAD_IN_PORT_${port}`);
@@ -49,7 +50,7 @@ async function bootstrap() {
   );
   app.use(
     session({
-      secret: process.env['SESSION_SECRET'],
+      secret: SESSION_SECRET,
       cookie: {
         httpOnly: true,
         maxAge: 1000 * 60 * 60 * 6,
