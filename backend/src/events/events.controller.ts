@@ -5,7 +5,6 @@ import { RoleEnum } from '../roles/role.enum';
 import { RolesGuard } from '../roles/roles.guard';
 import { SessionRecord } from '../session/session';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { TokenResponseDto } from './token-response.dto';
 
 @Controller({
   version: '1',
@@ -18,7 +17,7 @@ export class EventsController {
   @ApiOperation({
     summary: '웹소켓용 jwt 토큰 발급',
   })
-  @ApiResponse({ type: TokenResponseDto })
+  @ApiResponse({ type: String })
   @UseGuards(RolesGuard)
   @Roles(RoleEnum.Admin, RoleEnum.User)
   @Get('/token')
