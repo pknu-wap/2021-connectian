@@ -14,7 +14,7 @@ export class ChatsService {
   public async chatsByRoomId(roomId: string) {
     const rootRef = this.db.ref(`/chats/messages/${roomId}`);
     const response = await rootRef.get();
-    return response.val();
+    return response.exists() ? response.val() : {};
   }
 
   public async createRoom(title: string, purpose: string) {
@@ -77,7 +77,8 @@ export class ChatsService {
     const ref = this.db.ref(`/chats/members/${roomId}/${userId}`);
     const response = await ref.get();
     if (!response.exists()) return;
-    if (!!member.color) await ref.child('/color').set(member.color);
-    if (!!member.nickname) await ref.child('/nickname').set(member.nickname);
+    for (const [key, value] of Object.entries(member)) {
+      if (member[key] !== null) await ref.child(`/${key}`).set(value);
+    }
   }
 }

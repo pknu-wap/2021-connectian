@@ -37,7 +37,6 @@ export class UsersController {
 
   @ApiOperation({
     summary: 'user detail 설정',
-    description: 'value로 null값 보내지 마세요',
   })
   @Post('/setUserDetail')
   @Roles(RoleEnum.Admin, RoleEnum.User)

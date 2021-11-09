@@ -3,6 +3,7 @@ import { UsersService } from '../users/users.service';
 import { JwtService } from '@nestjs/jwt';
 import { ChatsService } from '../chats/chats.service';
 import { Socket } from 'socket.io';
+import { PushChatRequestDto } from './event.class';
 
 @Injectable()
 export class EventsService {
@@ -27,14 +28,14 @@ export class EventsService {
     return response.sub;
   }
 
-  public async joinRoom(client: Socket, data: any) {
+  public async joinRoom(client: Socket, data: string) {
     const userId = await this.getUserId(client.handshake.auth.access_token);
     if (await this.usersService.isUserInRoomByUserId(userId, data)) {
       client.join(data);
     }
   }
 
-  public async pushChat(client: Socket, data: any) {
+  public async pushChat(client: Socket, data: PushChatRequestDto) {
     const userId = await this.getUserId(client.handshake.auth.access_token);
     const message = await this.chatsService.pushChat(
       data.roomId,

@@ -53,9 +53,11 @@ export class UsersService {
   }
 
   public async setUserDetail(userId: string, userDetail: UserDetail) {
-    const ref = await this.db.ref(`/users/${userId}/detail`);
-    const response = await ref.get();
-    const value = { ...response.val(), ...userDetail };
-    return ref.set(value);
+    const ref = this.db.ref(`/users/${userId}/detail`);
+    for (const [key, value] of Object.entries(userDetail)) {
+      if (value !== null) {
+        await ref.child(`/${key}`).set(value);
+      }
+    }
   }
 }

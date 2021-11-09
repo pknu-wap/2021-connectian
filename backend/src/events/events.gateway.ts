@@ -8,6 +8,7 @@ import { Socket } from 'socket.io';
 import { UseGuards } from '@nestjs/common';
 import { EventsGuard } from './events.guard';
 import { EventsService } from './events.service';
+import { PushChatRequestDto } from './event.class';
 
 @WebSocketGateway()
 export class EventsGateway {
@@ -16,7 +17,7 @@ export class EventsGateway {
   @SubscribeMessage('pushChat')
   public async pushChat(
     @ConnectedSocket() client: Socket,
-    @MessageBody() data,
+    @MessageBody() data: PushChatRequestDto,
   ) {
     await this.eventsService.pushChat(client, data);
   }
@@ -25,7 +26,7 @@ export class EventsGateway {
   @UseGuards(EventsGuard)
   public async joinRoom(
     @ConnectedSocket() client: Socket,
-    @MessageBody() data,
+    @MessageBody() data: string,
   ) {
     await this.eventsService.joinRoom(client, data);
   }
