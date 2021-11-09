@@ -1,0 +1,41 @@
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+        content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>DEVELOPMENT</title>
+  <style>
+    .alert-container {
+      background: red;
+      color: white;
+    }
+  </style>
+</head>
+<body>
+<div class="alert-container">
+  <h1>
+    에러: REACT 가 STATIC_ASSETS 에 탑재되지 않았습니다!
+  </h1>
+</div>
+{{#if env}}
+  <h2>
+    NODE_ENV=development 모드
+  </h2>
+  <ul>
+    <li>
+      기능 테스트: <a href="/testing">/testing</a>
+    </li>
+    <li>
+      세션저장소 확인: <a href="/testing/profile">/testing/profile</a>
+    </li>
+    <li>
+      API 문서: <a href="/api">/api</a>
+    </li>
+    <li>
+      로그인 테스트: <a href="/v1/auth/google">/v1/auth/google</a>
+    </li>
+  </ul>
+{{/if}}
+</body>
+</html>
