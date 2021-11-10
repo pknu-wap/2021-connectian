@@ -12,11 +12,7 @@ import * as session from 'express-session';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { FirestoreStore } from '@google-cloud/connect-firestore';
 import { ConfigService } from '@nestjs/config';
-import {
-  AsyncApiDocumentBuilder,
-  AsyncApiModule,
-  AsyncServerObject,
-} from 'nestjs-asyncapi';
+import { AsyncApiDocumentBuilder, AsyncApiModule } from 'nestjs-asyncapi';
 
 async function bootstrap() {
   console.time(`NEST_LOAD_IN`);
@@ -53,10 +49,6 @@ async function bootstrap() {
         .build(),
     ),
   );
-  const asyncServer: AsyncServerObject = {
-    url: 'ws://localhost:3000/socket.io',
-    protocol: 'socket.io',
-  };
   await AsyncApiModule.setup(
     '/api/events',
     app,
@@ -66,7 +58,6 @@ async function bootstrap() {
         .setTitle('CONNECTIAN-ASYNC')
         .setDescription('Event-Driven Websocket API DOCs')
         .setVersion('1.0')
-        .addServer('events', asyncServer)
         .build(),
     ),
   );
