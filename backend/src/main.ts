@@ -41,7 +41,7 @@ async function bootstrap() {
   app.useWebSocketAdapter(new IoAdapter(app));
   const configService = app.get(ConfigService);
   SwaggerModule.setup(
-    'api',
+    '/api',
     app,
     SwaggerModule.createDocument(
       app,
@@ -49,6 +49,7 @@ async function bootstrap() {
         .setTitle('CONNECTIAN')
         .setDescription('CONNECTIAN 2021')
         .setVersion('1.0')
+        .setExternalDoc('웹소켓 API', '/api/events')
         .build(),
     ),
   );
@@ -57,7 +58,7 @@ async function bootstrap() {
     protocol: 'socket.io',
   };
   await AsyncApiModule.setup(
-    'events',
+    '/api/events',
     app,
     AsyncApiModule.createDocument(
       app,
