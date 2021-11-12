@@ -52,11 +52,30 @@ export class UsersService {
     }
   }
 
+  public async getPreferences() {
+    const ref = await this.db.ref('/enums/preferences').get();
+    return ref.val();
+  }
+
+  public async getGenders() {
+    const ref = await this.db.ref('/enums/genders').get();
+    return ref.val();
+  }
+
   public async setUserDetail(userId: string, userDetail: UserDetail) {
-    const ref = this.db.ref(`/users/${userId}/detail`);
+    const rootRef = this.db.ref();
+    const userDetailRef = rootRef.child(`/users/${userId}/detail`);
+    const preferenceRef = await rootRef
+      .child(`/enums/preferences/${userDetail.preference}`)
+      .get();
+    const genderRef = await rootRef
+      .child(`/enums/genders/${userDetail.gender}`)
+      .get();
+    await userDetail.setPreference(preferenceRef.val());
+    await userDetail.setGender(genderRef.val());
     for (const [key, value] of Object.entries(userDetail)) {
       if (value !== null) {
-        await ref.child(`/${key}`).set(value);
+        await userDetailRef.child(`/${key}`).set(value);
       }
     }
   }

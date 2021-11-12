@@ -3,13 +3,11 @@ import { ApiProperty } from '@nestjs/swagger';
 export class Room {
   constructor(
     title: string,
-    purpose: string,
     lastMessage: string,
     createdAt: Date | number,
     modifiedAt: Date | number,
   ) {
     this.title = title;
-    this.createdPurpose = purpose;
     this.lastMessage = lastMessage;
     this.modifiedAt =
       typeof modifiedAt !== 'number' ? modifiedAt : new Date(modifiedAt);
@@ -27,9 +25,6 @@ export class Room {
 
   @ApiProperty()
   title: string;
-
-  @ApiProperty()
-  createdPurpose: string;
 
   @ApiProperty()
   lastMessage: string;

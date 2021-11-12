@@ -36,6 +36,26 @@ export class UsersController {
   }
 
   @ApiOperation({
+    summary: '사용자 preference 취향 리스트',
+  })
+  @Roles(RoleEnum.Admin, RoleEnum.User)
+  @UseGuards(RolesGuard)
+  @Get('/getPreferences')
+  public async getPreferences() {
+    return this.usersService.getPreferences();
+  }
+
+  @ApiOperation({
+    summary: '사용자 genders 성별 리스트',
+  })
+  @Roles(RoleEnum.Admin, RoleEnum.User)
+  @UseGuards(RolesGuard)
+  @Get('/getGenders')
+  public async getGenders() {
+    return this.usersService.getGenders();
+  }
+
+  @ApiOperation({
     summary: 'user detail 설정',
   })
   @Post('/setUserDetail')

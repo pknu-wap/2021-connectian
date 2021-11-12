@@ -6,28 +6,16 @@ import { Member, Message, Room } from './chats';
 export class ChatsService {
   private db = database();
 
-  public async getPurposes() {
-    const ref = await this.db.ref('/enums/purposes').get();
-    return ref.val();
-  }
-
   public async chatsByRoomId(roomId: string) {
     const rootRef = this.db.ref(`/chats/messages/${roomId}`);
     const response = await rootRef.get();
     return response.exists() ? response.val() : {};
   }
 
-  public async createRoom(title: string, purpose: string) {
+  public async createRoom(title: string) {
     const rootRef = this.db.ref();
-    const purposeValue = await rootRef.child(`/enums/purpose/${purpose}`).get();
     const date = new Date();
-    const room = new Room(
-      title,
-      purposeValue.val(),
-      '',
-      date,
-      date,
-    ).toPrimitive();
+    const room = new Room(title, '', date, date).toPrimitive();
     return rootRef.child('/chats/rooms').push(room).key;
   }
 

@@ -44,16 +44,6 @@ export class ChatsController {
   }
 
   @ApiOperation({
-    summary: 'room 및 사용자 PURPOSE 리스트',
-  })
-  @Roles(RoleEnum.Admin)
-  @UseGuards(RolesGuard)
-  @Get('/getPurposes')
-  public getPurposes() {
-    return this.chatsService.getPurposes();
-  }
-
-  @ApiOperation({
     summary: 'room별 유저 닉네임, 색 설정',
   })
   @Roles(RoleEnum.Admin, RoleEnum.User)
@@ -76,11 +66,8 @@ export class ChatsController {
   @Roles(RoleEnum.Admin)
   @UseGuards(RolesGuard)
   @Get('/createRoom')
-  public async createRoom(
-    @Query('title') title: string,
-    @Query('purpose') purpose: string,
-  ) {
-    return this.chatsService.createRoom(title, purpose);
+  public async createRoom(@Query('title') title: string) {
+    return this.chatsService.createRoom(title);
   }
 
   @ApiOperation({

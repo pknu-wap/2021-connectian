@@ -14,11 +14,22 @@ export class Chats {
 }
 
 export class UserDetail {
+  setPreference(preference: string) {
+    this.preference = preference;
+  }
+
+  setGender(gender: string) {
+    this.gender = gender;
+  }
+
+  @ApiProperty()
+  gender: string;
+
   @ApiProperty()
   age: number;
 
   @ApiProperty()
-  purpose: string;
+  preference: string;
 
   @ApiProperty()
   mbti: string;
