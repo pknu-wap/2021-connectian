@@ -13,6 +13,7 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { FirestoreStore } from '@google-cloud/connect-firestore';
 import { ConfigService } from '@nestjs/config';
 import { AsyncApiDocumentBuilder, AsyncApiModule } from 'nestjs-asyncapi';
+import { v4 as uuid } from 'uuid';
 
 async function bootstrap() {
   console.time(`NEST_LOAD_IN`);
@@ -36,8 +37,10 @@ async function bootstrap() {
   app.setBaseViewsDir(join(__dirname, '..', 'views'));
   app.useWebSocketAdapter(new IoAdapter(app));
   const configService = app.get(ConfigService);
+  const isProduction = configService.get<string>('NODE_ENV') !== 'development';
+  const apiDocUuid = uuid();
   SwaggerModule.setup(
-    '/api',
+    isProduction ? `/api/${apiDocUuid}` : '/api',
     app,
     SwaggerModule.createDocument(
       app,
@@ -50,7 +53,7 @@ async function bootstrap() {
     ),
   );
   await AsyncApiModule.setup(
-    '/api/events',
+    isProduction ? `/api/events/${apiDocUuid}` : '/api/events',
     app,
     AsyncApiModule.createDocument(
       app,
@@ -82,6 +85,11 @@ async function bootstrap() {
     }),
   );
   await app.listen(configService.get<number>('PORT') || 3000, '0.0.0.0');
+  console.log(
+    `API DOCs PASSCODE: ${
+      isProduction ? apiDocUuid : 'DISABLED (NODE_ENV=development)'
+    }`,
+  );
 }
 
 bootstrap().then(() => console.timeEnd(`NEST_LOAD_IN`));
