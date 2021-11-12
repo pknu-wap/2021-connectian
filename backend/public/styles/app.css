@@ -1,17 +1,17 @@
 #chat-container {
     border: 1px solid black;
-    width: 900px;
+    width: 80%;
     display: flex;
 }
 
 #send-text {
-    width: 500px;
+    width: 70%;
 }
 
 #room-box {
     border-right: 1px solid black;
     float: left;
-    width: 200px;
+    width: 20%;
     padding: 10px;
 }
 
@@ -84,4 +84,9 @@
 
 .login-btn {
     width: 256px;
+}
+
+#account-info-raw {
+    width: 100%;
+    overflow: hidden;
 }

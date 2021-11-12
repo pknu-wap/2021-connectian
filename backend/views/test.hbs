@@ -42,7 +42,7 @@
   </a>
 </div>
 <div id="account-info-container">
-  <span id="account-info-raw"></span>
+  <p id="account-info-raw"></p>
   <hr>
   <div>
     <img src="." alt="profile-img" id="photo">
@@ -61,11 +61,11 @@
       const child = document.createElement("div");
       child.className = "yourMsg";
       child.textContent = `${document.members[document.roomId][data.userId].nickname}: ${data.message}`;
-      const brElement = document.createElement('br')
-      const createdAt = document.createElement('small')
-      createdAt.innerHTML = new Date(data.createdAt).toLocaleString()
-      child.appendChild(brElement)
-      child.appendChild(createdAt)
+      const brElement = document.createElement("br");
+      const createdAt = document.createElement("small");
+      createdAt.innerHTML = new Date(data.createdAt).toLocaleString();
+      child.appendChild(brElement);
+      child.appendChild(createdAt);
       document.querySelector("#chat-list").appendChild(child);
       document.querySelector(`div#${document.roomId} > small.last-message`).innerHTML = data.message;
     });
@@ -82,11 +82,11 @@
     const child = document.createElement("div");
     child.className = "myMsg";
     child.textContent = `ME: ${value}`;
-    const brElement = document.createElement('br')
-    const createdAt = document.createElement('small')
-    createdAt.innerHTML = new Date().toLocaleString()
-    child.appendChild(brElement)
-    child.appendChild(createdAt)
+    const brElement = document.createElement("br");
+    const createdAt = document.createElement("small");
+    createdAt.innerHTML = new Date().toLocaleString();
+    child.appendChild(brElement);
+    child.appendChild(createdAt);
     document.querySelector("#chat-list").appendChild(child);
     document.querySelector(`div#${document.roomId} > small.last-message`).innerHTML = value;
   };
@@ -118,7 +118,7 @@
       roomElement.appendChild(roomTitle);
       roomElement.appendChild(document.createElement("br"));
       const lastMessage = document.createElement("small");
-      lastMessage.className = 'last-message';
+      lastMessage.className = "last-message";
       lastMessage.innerHTML = room.lastMessage;
       roomElement.appendChild(lastMessage);
       roomElement.appendChild(document.createElement("br"));
@@ -131,19 +131,19 @@
         document.roomId = room.roomId;
         fetch(`/v1/chats?roomId=${room.roomId}`).then(res => res.text().then(raw => {
           const body = JSON.parse(raw);
-          const chats = Object.values(body);
+          const chats = Object.entries(body);
           document.querySelector("#chat-list").innerHTML = "";
-          chats.forEach(chat => {
+          for (const [key, chat] of chats) {
             const child = document.createElement("div");
             child.className = document.myInfo.userId === chat.userId ? "myMsg" : "yourMsg";
             child.textContent = `${document.members[document.roomId][chat.userId].nickname}: ${chat.message}`;
-            const brElement = document.createElement('br')
-            const createdAt = document.createElement('small')
-            createdAt.innerHTML = new Date(chat.createdAt).toLocaleString()
-            child.appendChild(brElement)
-            child.appendChild(createdAt)
+            const brElement = document.createElement("br");
+            const createdAt = document.createElement("small");
+            createdAt.innerHTML = new Date(chat.createdAt).toLocaleString();
+            child.appendChild(brElement);
+            child.appendChild(createdAt);
             document.querySelector("#chat-list").appendChild(child);
-          });
+          }
         }));
       });
       const members = {};
