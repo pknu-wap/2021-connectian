@@ -32,12 +32,16 @@ async function bootstrap() {
   app.enableVersioning({
     type: VersioningType.URI,
   });
-  app.useStaticAssets(join(__dirname, '..', 'public'));
+  const configService = app.get(ConfigService);
+  const isProduction = configService.get<string>('NODE_ENV') !== 'development';
+  app.useStaticAssets(
+    isProduction
+      ? join(__dirname, '../../frontend/my-app/build')
+      : join(__dirname, '..', 'public'),
+  );
   app.setViewEngine('hbs');
   app.setBaseViewsDir(join(__dirname, '..', 'views'));
   app.useWebSocketAdapter(new IoAdapter(app));
-  const configService = app.get(ConfigService);
-  const isProduction = configService.get<string>('NODE_ENV') !== 'development';
   const apiDocUuid = uuid();
   SwaggerModule.setup(
     isProduction ? `/api/${apiDocUuid}` : '/api',
