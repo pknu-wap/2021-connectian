@@ -88,7 +88,10 @@ async function bootstrap() {
       transform: true,
     }),
   );
-  await app.listen(configService.get<number>('PORT') || 3000, '0.0.0.0');
+  await app.listen(
+    configService.get<number | string>('PORT') || 3000,
+    '0.0.0.0',
+  );
   console.log(
     `API DOCs PASSCODE: ${
       isProduction ? apiDocUuid : 'DISABLED (NODE_ENV=development)'
