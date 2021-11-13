@@ -1,4 +1,4 @@
-import { IsEnum, IsNumber, IsString, validateSync } from 'class-validator';
+import { IsEnum, IsNotEmpty, IsString, validateSync } from 'class-validator';
 import { plainToClass } from 'class-transformer';
 
 enum NODE_ENV {
@@ -11,8 +11,8 @@ class EnvironmentVariables {
   @IsEnum(NODE_ENV)
   NODE_ENV: NODE_ENV;
 
-  @IsNumber()
-  PORT: number;
+  @IsNotEmpty()
+  PORT: number | string;
 
   @IsString()
   GOOGLE_CLIENT_ID: string;

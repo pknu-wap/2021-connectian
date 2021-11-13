@@ -89,7 +89,7 @@ async function bootstrap() {
     }),
   );
   await app.listen(
-    configService.get<number | string>('PORT') || 3000,
+    configService.get<string | number>('PORT') || 3000,
     '0.0.0.0',
   );
   console.log(
