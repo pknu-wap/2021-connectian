@@ -1,0 +1,21 @@
+.menubar{
+	display : flex;
+	justify-content: center;
+}
+.menu{
+	background-color : #F4EBE7;
+	display : flex;
+	width: 80%;
+	border-radius: 10px;
+	justify-content: space-around;
+}
+.menu li{
+	list-style: none;
+	padding : 0.5rem;
+}
+.menu a{
+	color: #F8C8C4;
+  	font-size: 45px;
+	text-decoration: none;
+	
+}
